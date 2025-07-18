@@ -54,13 +54,18 @@ func getCommands() map[string]cliCommand {
 	return map[string]cliCommand{
 		"help": {
 			name:        "help",
-			description: "Display help message",
+			description: "Displays this help message",
 			callback:    commandHelp,
 		},
 		"start": {
 			name:        "start",
 			description: "Start a game",
 			callback:    commandStart,
+		},
+		"exit": {
+			name:        "exit",
+			description: "Exit out of Rook",
+			callback:    commandExit,
 		},
 	}
 }
