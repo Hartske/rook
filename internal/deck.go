@@ -2,6 +2,7 @@ package internal
 
 import (
 	"fmt"
+	"math/rand"
 )
 
 type Deck struct {
@@ -50,4 +51,12 @@ func buildDeck() Deck {
 	return Deck{
 		Cards: newCards,
 	}
+}
+
+func shuffleDeck(cards []Card) []Card {
+	for i := range cards {
+		j := rand.Intn(i + 1)
+		cards[i], cards[j] = cards[j], cards[i]
+	}
+	return cards
 }
