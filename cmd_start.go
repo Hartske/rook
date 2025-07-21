@@ -1,6 +1,8 @@
 package main
 
-func commandStart(args ...string) error {
+import "github.com/hartske/rook/internal"
 
+func commandStart(args ...string) error {
+	internal.StartGame()
 	return nil
 }
