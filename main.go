@@ -4,5 +4,6 @@ import "fmt"
 
 func main() {
 	fmt.Println("Welcome to Rook CLI")
-	startRepl()
+	ctx := NewGameContext()
+	ctx.REPL()
 }

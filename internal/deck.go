@@ -9,7 +9,7 @@ type Deck struct {
 	Cards []Card
 }
 
-func buildDeck() Deck {
+func BuildDeck() *Deck {
 	var newCards []Card
 	for i := 0; i < 56; i++ {
 		if i < 14 {
@@ -48,15 +48,14 @@ func buildDeck() Deck {
 		Suit:  "black",
 	}
 	newCards = append(newCards, rook)
-	return Deck{
+	return &Deck{
 		Cards: newCards,
 	}
 }
 
-func shuffleDeck(cards []Card) []Card {
-	for i := range cards {
+func (d *Deck) shuffleDeck() {
+	for i := range d.Cards {
 		j := rand.Intn(i + 1)
-		cards[i], cards[j] = cards[j], cards[i]
+		d.Cards[i], d.Cards[j] = d.Cards[j], d.Cards[i]
 	}
-	return cards
 }
