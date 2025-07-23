@@ -48,15 +48,27 @@ func (ctx *GameContext) setCommands() {
 			description: "Exits Rook",
 			callback:    commandExit,
 		},
-		"test": {
-			name:        "test",
-			description: "Shows test results",
-			callback:    showTest,
+	}
+	ctx.Commands[PreGame] = map[string]cliCommand{
+		"help": {
+			name:        "help",
+			description: "Displays this help message",
+			callback:    commandHelp,
 		},
-		"players": {
-			name:        "players",
-			description: "Shows players",
-			callback:    showPlayers,
+		"exit": {
+			name:        "exit",
+			description: "Exits Rook",
+			callback:    commandExit,
+		},
+		"quit": {
+			name:        "quit",
+			description: "Quit current game of Rook",
+			callback:    commandQuit,
+		},
+		"draw": {
+			name:        "draw",
+			description: "Draw a card to decide the starting Dealer",
+			callback:    commandDraw,
 		},
 	}
 }

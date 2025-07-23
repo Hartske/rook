@@ -1,8 +1,10 @@
 package main
 
-import "github.com/hartske/rook/internal"
+import "fmt"
 
 func commandStart(ctx *GameContext, args ...string) error {
-	internal.StartGame()
+	fmt.Println("Starting a new game...")
+	ctx.preGame()
+
 	return nil
 }

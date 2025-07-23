@@ -60,13 +60,15 @@ func (d *Deck) Shuffle() {
 	}
 }
 
-func (d *Deck) Draw() (Card, bool) {
+func (d *Deck) Draw(player *Player) (Card, bool) {
 	if len(d.Cards) == 0 {
 		return Card{}, false
 	}
 
 	card := d.Cards[len(d.Cards)-1]
 	d.Cards = d.Cards[:len(d.Cards)-1]
+
+	card.Owner = player.Name
 
 	return card, true
 }
