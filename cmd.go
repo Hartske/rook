@@ -17,7 +17,7 @@ func runCommand(ctx *GameContext, input string) {
 		args = words[1:]
 	}
 
-	cmd, exists := getCommands()[commandName]
+	cmd, exists := ctx.Commands[ctx.State][commandName]
 	if exists {
 		err := cmd.callback(ctx, args...)
 		if err != nil {
@@ -30,14 +30,9 @@ func runCommand(ctx *GameContext, input string) {
 	}
 }
 
-func cleanInput(text string) []string {
-	input := strings.ToLower(text)
-	clean := strings.Fields(input)
-	return clean
-}
-
-func getCommands() map[string]cliCommand {
-	return map[string]cliCommand{
+func (ctx *GameContext) setCommands() {
+	// Main Menu commands
+	ctx.Commands[MainMenu] = map[string]cliCommand{
 		"help": {
 			name:        "help",
 			description: "Displays this help message",
@@ -45,13 +40,29 @@ func getCommands() map[string]cliCommand {
 		},
 		"start": {
 			name:        "start",
-			description: "Start a game",
+			description: "Starts a game of Rook",
 			callback:    commandStart,
 		},
 		"exit": {
 			name:        "exit",
-			description: "Exit out of Rook",
+			description: "Exits Rook",
 			callback:    commandExit,
 		},
+		"test": {
+			name:        "test",
+			description: "Shows test results",
+			callback:    showTest,
+		},
+		"players": {
+			name:        "players",
+			description: "Shows players",
+			callback:    showPlayers,
+		},
 	}
+}
+
+func cleanInput(text string) []string {
+	input := strings.ToLower(text)
+	clean := strings.Fields(input)
+	return clean
 }

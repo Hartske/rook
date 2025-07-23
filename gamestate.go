@@ -25,11 +25,15 @@ type cliCommand struct {
 }
 
 type GameContext struct {
-	State    GameState
-	Deck     *internal.Deck
-	Commands map[GameState]map[string]cliCommand
-	Scanner  *bufio.Scanner
-	Running  bool
+	State       GameState
+	Deck        *internal.Deck
+	Commands    map[GameState]map[string]cliCommand
+	Scanner     *bufio.Scanner
+	Running     bool
+	PlayerOne   *internal.Player
+	PlayerTwo   *internal.Player
+	PlayerThree *internal.Player
+	PlayerFour  *internal.Player
 }
 
 func NewGameContext() *GameContext {
@@ -39,6 +43,26 @@ func NewGameContext() *GameContext {
 		Running:  true,
 		Commands: make(map[GameState]map[string]cliCommand),
 		Deck:     internal.BuildDeck(),
+		PlayerOne: &internal.Player{
+			Name:  "Player One",
+			Score: 0,
+			Hand:  make([]internal.Card, 0),
+		},
+		PlayerTwo: &internal.Player{
+			Name:  "Player Two",
+			Score: 0,
+			Hand:  make([]internal.Card, 0),
+		},
+		PlayerThree: &internal.Player{
+			Name:  "Player Three",
+			Score: 0,
+			Hand:  make([]internal.Card, 0),
+		},
+		PlayerFour: &internal.Player{
+			Name:  "Player Four",
+			Score: 0,
+			Hand:  make([]internal.Card, 0),
+		},
 	}
 	ctx.setCommands()
 	return ctx
@@ -50,27 +74,6 @@ func (ctx *GameContext) changeState(newState GameState) {
 
 func (ctx *GameContext) stop() {
 	ctx.Running = false
-}
-
-func (ctx *GameContext) setCommands() {
-	// Main Menu commands
-	ctx.Commands[MainMenu] = map[string]cliCommand{
-		"help": {
-			name:        "help",
-			description: "Displays this help message",
-			callback:    commandHelp,
-		},
-		"start": {
-			name:        "start",
-			description: "Starts a game of Rook",
-			callback:    commandStart,
-		},
-		"exit": {
-			name:        "exit",
-			description: "Exits the game",
-			callback:    commandExit,
-		},
-	}
 }
 
 func (ctx *GameContext) REPL() {

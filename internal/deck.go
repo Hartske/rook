@@ -11,7 +11,7 @@ type Deck struct {
 
 func BuildDeck() *Deck {
 	var newCards []Card
-	for i := 0; i < 56; i++ {
+	for i := 0; i < 58; i++ {
 		if i < 14 {
 			card := Card{
 				Name:  fmt.Sprintf("Red | %d", i+1),
@@ -19,24 +19,24 @@ func BuildDeck() *Deck {
 				Suit:  "red",
 			}
 			newCards = append(newCards, card)
-		} else if i > 13 && i < 27 {
+		} else if i > 13 && i < 28 {
 			card := Card{
 				Name:  fmt.Sprintf("Green | %d", i-13),
 				Value: i - 13,
 				Suit:  "green",
 			}
 			newCards = append(newCards, card)
-		} else if i > 27 && i < 41 {
+		} else if i > 28 && i < 43 {
 			card := Card{
-				Name:  fmt.Sprintf("Yellow | %d", i-27),
-				Value: i - 27,
+				Name:  fmt.Sprintf("Yellow | %d", i-28),
+				Value: i - 28,
 				Suit:  "yellow",
 			}
 			newCards = append(newCards, card)
-		} else if i > 41 && i <= 55 {
+		} else if i > 43 && i <= 58 {
 			card := Card{
-				Name:  fmt.Sprintf("Black | %d", i-41),
-				Value: i - 41,
+				Name:  fmt.Sprintf("Black | %d", i-43),
+				Value: i - 43,
 				Suit:  "black",
 			}
 			newCards = append(newCards, card)
@@ -53,9 +53,24 @@ func BuildDeck() *Deck {
 	}
 }
 
-func (d *Deck) shuffleDeck() {
+func (d *Deck) Shuffle() {
 	for i := range d.Cards {
 		j := rand.Intn(i + 1)
 		d.Cards[i], d.Cards[j] = d.Cards[j], d.Cards[i]
 	}
+}
+
+func (d *Deck) Draw() (Card, bool) {
+	if len(d.Cards) == 0 {
+		return Card{}, false
+	}
+
+	card := d.Cards[len(d.Cards)-1]
+	d.Cards = d.Cards[:len(d.Cards)-1]
+
+	return card, true
+}
+
+func (d *Deck) Reset() {
+	*d = *BuildDeck()
 }
