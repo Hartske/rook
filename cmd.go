@@ -71,6 +71,28 @@ func (ctx *GameContext) setCommands() {
 			callback:    commandDraw,
 		},
 	}
+	ctx.Commands[Dealer] = map[string]cliCommand{
+		"help": {
+			name:        "help",
+			description: "Displays this help message",
+			callback:    commandHelp,
+		},
+		"exit": {
+			name:        "exit",
+			description: "Exits Rook",
+			callback:    commandExit,
+		},
+		"quit": {
+			name:        "quit",
+			description: "Quit current game of Rook",
+			callback:    commandQuit,
+		},
+		"deal": {
+			name:        "deal",
+			description: "Deal the cards",
+			callback:    commandDeal,
+		},
+	}
 }
 
 func cleanInput(text string) []string {
