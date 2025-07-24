@@ -18,7 +18,9 @@ func (ctx *GameContext) preGame() {
 }
 
 func (ctx *GameContext) decideDealer() {
-	winner := internal.Player{}
+	var winner *internal.Player
+	var hasTie bool
+
 	for {
 		card := ctx.Deck.Draw(ctx.PlayerOne)
 		fmt.Printf("You drew: %s\n", card.Name)
@@ -36,7 +38,7 @@ func (ctx *GameContext) decideDealer() {
 		fmt.Printf("Player 4 drew: %s\n", card.Name)
 		ctx.Pot = append(ctx.Pot, card)
 
-		if winner, hasTie := ctx.dealerWin(); !hasTie {
+		if winner, hasTie = ctx.dealerWin(); !hasTie {
 			fmt.Println()
 			fmt.Printf("The starting dealer is: %s\n", winner.Name)
 			fmt.Println()
@@ -55,11 +57,12 @@ func (ctx *GameContext) decideDealer() {
 
 		ctx.potReset()
 	}
-	ctx.preDeal(&winner)
+	ctx.preDeal(winner)
 }
 
 func (ctx *GameContext) preDeal(winner *internal.Player) {
 	if winner == ctx.PlayerOne {
+		ctx.changeState(Dealer)
 		fmt.Println("It's your 'deal'!")
 		fmt.Println()
 	} else {
@@ -76,7 +79,7 @@ func (ctx *GameContext) deal() {
 	}
 	startIndex := -1
 	for i, player := range players {
-		if player != nil && player.IsDealer {
+		if !player.IsDealer {
 			startIndex = i
 			break
 		}
@@ -101,7 +104,7 @@ func (ctx *GameContext) deal() {
 	fmt.Println()
 }
 
-func (ctx *GameContext) dealerWin() (internal.Player, bool) {
+func (ctx *GameContext) dealerWin() (*internal.Player, bool) {
 	winner := ctx.Pot[0]
 	tie := false
 	for i := range ctx.Pot {
@@ -124,15 +127,15 @@ func (ctx *GameContext) dealerWin() (internal.Player, bool) {
 	}
 	switch winner.Owner {
 	case "Player One":
-		return *ctx.PlayerOne, tie
+		return ctx.PlayerOne, tie
 	case "Player Two":
-		return *ctx.PlayerTwo, tie
+		return ctx.PlayerTwo, tie
 	case "Player Three":
-		return *ctx.PlayerThree, tie
+		return ctx.PlayerThree, tie
 	case "Player Four":
-		return *ctx.PlayerFour, tie
+		return ctx.PlayerFour, tie
 	default:
-		return internal.Player{}, tie
+		return nil, tie
 	}
 }
 
