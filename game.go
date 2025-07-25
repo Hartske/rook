@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/hartske/rook/internal"
 )
@@ -45,6 +46,8 @@ func (ctx *GameContext) decideDealer() {
 			if !winner.IsDealer {
 				winner.IsDealer = true
 			}
+			fmt.Println("Giving the deck another shuffle...")
+			fmt.Println()
 			ctx.potReset()
 			ctx.Deck.Reset()
 			ctx.Deck.Shuffle()
@@ -88,19 +91,28 @@ func (ctx *GameContext) deal() {
 		startIndex = 0
 	}
 
-	fmt.Println("Your Hand")
-	fmt.Println("=========")
+	fmt.Println("Dealing...")
 	currentIndex := 0
 	for len(ctx.Deck.Cards) > 0 {
 		actualIndex := (startIndex + currentIndex) % len(players)
 		player := players[actualIndex]
 		card := ctx.Deck.Draw(player)
-		player.Hand = append(player.Hand, card)
+
+		pos := findPos(player.Hand, card)
+		player.Hand = insertHand(player.Hand, card, pos)
+
+		//player.Hand = append(player.Hand, card)
 		if player == ctx.PlayerOne {
-			fmt.Printf("%s", card.Name)
+			fmt.Print(".")
+			time.Sleep(200 * time.Millisecond)
 		}
 		currentIndex++
 	}
+	fmt.Println()
+	fmt.Println()
+	fmt.Println("Your Hand")
+	fmt.Println("=========")
+	printHand(ctx.PlayerOne.Hand)
 	fmt.Println()
 }
 
@@ -172,5 +184,37 @@ func (ctx *GameContext) checkWin() internal.Player {
 		return *ctx.PlayerFour
 	default:
 		return internal.Player{}
+	}
+}
+
+var suitOrder = map[string]int{
+	"red":    0,
+	"yellow": 1,
+	"green":  2,
+	"black":  3,
+}
+
+func findPos(hand []*internal.Card, newCard *internal.Card) int {
+	for i, card := range hand {
+		if suitOrder[newCard.Suit] < suitOrder[card.Suit] || (newCard.Suit == card.Suit && newCard.Value < card.Value) {
+			return i
+		}
+	}
+	return len(hand)
+}
+
+func insertHand(hand []*internal.Card, newCard *internal.Card, pos int) []*internal.Card {
+	hand = append(hand, &internal.Card{})
+	copy(hand[pos+1:], hand[pos:])
+	hand[pos] = newCard
+	return hand
+}
+
+func printHand(hand []*internal.Card) {
+	for i, card := range hand {
+		if i > 0 {
+			fmt.Print(" ")
+		}
+		fmt.Print(card.Name)
 	}
 }
