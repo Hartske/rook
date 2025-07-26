@@ -114,6 +114,7 @@ func (ctx *GameContext) deal() {
 	fmt.Println("=========")
 	printHand(ctx.PlayerOne.Hand)
 	fmt.Println()
+	ctx.placeBids()
 }
 
 func (ctx *GameContext) dealerWin() (*internal.Player, bool) {
