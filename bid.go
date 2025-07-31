@@ -11,14 +11,10 @@ import (
 )
 
 func (ctx *GameContext) placeBids() {
-	players := []*internal.Player{
-		ctx.PlayerOne,
-		ctx.PlayerTwo,
-		ctx.PlayerThree,
-		ctx.PlayerFour,
-	}
+	bidders := ctx.Play.Bidders
+
 	startIndex := -1
-	for i, player := range players {
+	for i, player := range bidders {
 		if player.IsDealer {
 			startIndex = i
 			break
@@ -32,8 +28,8 @@ func (ctx *GameContext) placeBids() {
 	fmt.Println("begin bid loop:")
 	for bids := 0; bids < 4; bids++ {
 		fmt.Printf("bid loop: %d\n", (bids + 1))
-		actualIndex := (startIndex + currentIndex) % len(players)
-		player := players[actualIndex]
+		actualIndex := (startIndex + currentIndex) % len(bidders)
+		player := bidders[actualIndex]
 
 		ctx.getBid(player)
 
@@ -49,7 +45,7 @@ func (ctx *GameContext) getBid(player *internal.Player) {
 		ctx.playerBid()
 	case "Player Two", "Player Three", "Player Four":
 		fmt.Println("call comBid")
-		comBid(player)
+		ctx.comBid(player)
 	}
 }
 
@@ -57,29 +53,35 @@ func (ctx *GameContext) playerBid() {
 	fmt.Println("playerBid started")
 	scanner := bufio.NewScanner(os.Stdin)
 
-	fmt.Println()
-	fmt.Print("Place your bid: ")
-
 	for {
+		fmt.Println()
+		fmt.Print("Place your bid: ")
+
 		if !scanner.Scan() {
 			fmt.Println("Error reading input")
 			continue
 		}
+
 		input := strings.TrimSpace(scanner.Text())
 
 		if input == "help" {
 			fmt.Println("Help message")
-		} else if num, err := strconv.Atoi(input); err == nil {
-			ctx.PlayerOne.Bid = num
-			fmt.Printf("%s bid: %d\n", ctx.PlayerOne.Name, ctx.PlayerOne.Bid)
+		} else if input == "pass" {
+			fmt.Printf("%s passed\n", ctx.PlayerOne.Name)
+			return
+		} else if num, err := strconv.Atoi(input); err == nil && num%5 == 0 && num > ctx.Play.HighBid {
+			ctx.Play.HighBid = num
+			ctx.Play.HighBidder = ctx.PlayerOne.Name
+			fmt.Printf("%s bid: %d\n", ctx.Play.HighBidder, ctx.Play.HighBid)
 			return
 		} else {
-			fmt.Println("Please enter a valid integer")
+			fmt.Printf("Please enter a valid integer greater than the current bid: %d\n", ctx.Play.HighBid)
 		}
 	}
 }
 
-func comBid(player *internal.Player) {
-	player.Bid = 5
-	fmt.Printf("%s bid: %d\n", player.Name, player.Bid)
+func (ctx *GameContext) comBid(player *internal.Player) {
+	ctx.Play.HighBid = 10
+	ctx.Play.HighBidder = player.Name
+	fmt.Printf("%s bid: %d\n", ctx.Play.HighBidder, ctx.Play.HighBid)
 }

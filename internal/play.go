@@ -5,6 +5,7 @@ type Play struct {
 	HighBidder string
 	Trump      string
 	Pot        []*Card
+	Bidders    []*Player
 }
 
 func (p *Play) ResetPot() {

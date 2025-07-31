@@ -77,9 +77,11 @@ func NewGameContext() *GameContext {
 			HighBidder: "",
 			Trump:      "",
 			Pot:        make([]*internal.Card, 0),
+			Bidders:    make([]*internal.Player, 0),
 		},
 	}
 	ctx.setCommands()
+	ctx.setBidders()
 	return ctx
 }
 
@@ -107,6 +109,7 @@ func (ctx *GameContext) playReset() {
 	ctx.Play.HighBidder = ""
 	ctx.Play.Trump = ""
 	ctx.Play.ResetPot()
+	ctx.setBidders()
 }
 
 func (ctx *GameContext) playerReset() {
@@ -126,6 +129,15 @@ func (ctx *GameContext) playerReset() {
 	ctx.PlayerFour.Bid = 0
 	ctx.PlayerFour.Hand = make([]*internal.Card, 0)
 	ctx.PlayerFour.IsDealer = false
+}
+
+func (ctx *GameContext) setBidders() {
+	ctx.Play.Bidders = []*internal.Player{
+		ctx.PlayerOne,
+		ctx.PlayerTwo,
+		ctx.PlayerThree,
+		ctx.PlayerFour,
+	}
 }
 
 func (ctx *GameContext) checkDealer() (*internal.Player, bool) {
