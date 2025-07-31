@@ -34,8 +34,7 @@ type GameContext struct {
 	PlayerTwo   *internal.Player
 	PlayerThree *internal.Player
 	PlayerFour  *internal.Player
-	Pot         []*internal.Card
-	Trump       string
+	Play        *internal.Play
 }
 
 func NewGameContext() *GameContext {
@@ -73,8 +72,12 @@ func NewGameContext() *GameContext {
 			Hand:     make([]*internal.Card, 0),
 			IsDealer: false,
 		},
-		Pot:   make([]*internal.Card, 0),
-		Trump: "",
+		Play: &internal.Play{
+			HighBid:    0,
+			HighBidder: "",
+			Trump:      "",
+			Pot:        make([]*internal.Card, 0),
+		},
 	}
 	ctx.setCommands()
 	return ctx
@@ -92,12 +95,18 @@ func (ctx *GameContext) gameReset() {
 	ctx.changeState(MainMenu)
 	ctx.Deck.Reset()
 	ctx.playerReset()
-	ctx.potReset()
-	ctx.Trump = ""
+	ctx.playReset()
 	fmt.Println("         Welcome to Rook CLI!")
 	fmt.Println("       ========================")
 	fmt.Println("'Start' a game or 'help' to see commands")
 	fmt.Println()
+}
+
+func (ctx *GameContext) playReset() {
+	ctx.Play.HighBid = 0
+	ctx.Play.HighBidder = ""
+	ctx.Play.Trump = ""
+	ctx.Play.ResetPot()
 }
 
 func (ctx *GameContext) playerReset() {
@@ -117,10 +126,6 @@ func (ctx *GameContext) playerReset() {
 	ctx.PlayerFour.Bid = 0
 	ctx.PlayerFour.Hand = make([]*internal.Card, 0)
 	ctx.PlayerFour.IsDealer = false
-}
-
-func (ctx *GameContext) potReset() {
-	ctx.Pot = make([]*internal.Card, 0)
 }
 
 func (ctx *GameContext) checkDealer() (*internal.Player, bool) {
